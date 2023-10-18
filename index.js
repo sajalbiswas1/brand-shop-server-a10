@@ -65,6 +65,21 @@ async function run() {
         })
 
         //User Car section
+        
+        app.get('/userCard', async (req, res) => {
+            const cursor = userCardCollection.find();
+            const result = await cursor.toArray();
+            res.send(result);
+        })
+
+        app.get('/userCard/:email', async (req, res) => {
+            const getEmail = req.params.email;
+            const query = { email:getEmail }
+            const cursor = userCardCollection.find(query)
+            const result = await cursor.toArray()
+            res.send(result)
+        })
+
         app.post('/userCard', async (req, res) => {
             const newUserCard = req.body;
             console.log(newUserCard)
