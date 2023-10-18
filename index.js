@@ -11,7 +11,7 @@ app.use(express.json())
 
 
 
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.2fbewnn.mongodb.net/?retryWrites=true&w=majority`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
@@ -29,6 +29,7 @@ async function run() {
         await client.connect();
 
         const productCollection = client.db("productsDb").collection("product");
+        const userCardCollection = client.db("productsDb").collection("userCard")
 
 
         app.get('/products', async (req, res) => {
@@ -37,7 +38,16 @@ async function run() {
             res.send(result);
         })
 
-        app.get('/products/:name', async (req, res) => {
+        app.get('/products/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) }
+            console.log(query)
+            const result = await productCollection.findOne(query)
+            res.send(result)
+        })
+
+
+        app.get('/products/brand/:name', async (req, res) => {
             const name = req.params.name;
             const query = { brand:name }
             const cursor = productCollection.find(query)
@@ -45,11 +55,20 @@ async function run() {
             res.send(result)
         })
 
+        
 
         app.post('/products', async (req, res) => {
             const newProduct = req.body;
             console.log(newProduct)
             const result = await productCollection.insertOne(newProduct);
+            res.send(result)
+        })
+
+        //User Car section
+        app.post('/userCard', async (req, res) => {
+            const newUserCard = req.body;
+            console.log(newUserCard)
+            const result = await userCardCollection.insertOne(newUserCard);
             res.send(result)
         })
 
