@@ -64,6 +64,27 @@ async function run() {
             res.send(result)
         })
 
+        app.put('/products/:id', async(req,res)=>{
+            const id = req.params.id;
+            const user = req.body;
+            console.log(id, user);
+
+            const filter = {_id: new ObjectId(id)};
+            const options = {upsert:true};
+            const updateUser = {
+                $set:{
+                    name:user.name,
+                    brand:user.brand, 
+                    type:user.type, 
+                    price:user.price, 
+                    rating:user.rating, 
+                    image:user.image,
+                }
+            }
+            const result = await productCollection.updateOne(filter, updateUser, options);
+            res.send(result);
+        })
+
         //User Car section
         
         app.get('/userCard', async (req, res) => {
